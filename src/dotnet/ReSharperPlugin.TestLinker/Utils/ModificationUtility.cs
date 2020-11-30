@@ -19,6 +19,7 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.ExtensionsAPI.Tree;
 using JetBrains.ReSharper.Psi.Files;
 using JetBrains.ReSharper.Psi.Tree;
+using JetBrains.ReSharper.Psi.Util;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.TextControl;
@@ -116,8 +117,9 @@ namespace ReSharperPlugin.TestLinker.Utils
 
         private static IProjectFolder GetLinkedTypeFolder (string linkedTypeNamespace, IProject linkedTypeProject)
         {
-            var linkedTypeFolder = linkedTypeNamespace.TrimFromStart(linkedTypeProject.Name)
-                    .Split('.')
+            var rootNamespace = linkedTypeProject.GetDefaultNamespace() ?? linkedTypeProject.Name;
+            var linkedTypeFolder = linkedTypeNamespace.TrimFromStart(rootNamespace)
+                    .Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries)
                     .Aggregate(linkedTypeProject.Location, (currentFolder, nextFolder) => currentFolder.Combine(nextFolder));
 
             return linkedTypeProject.GetOrCreateProjectFolder(linkedTypeFolder).NotNull();
