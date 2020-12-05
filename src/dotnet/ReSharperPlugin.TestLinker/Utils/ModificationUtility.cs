@@ -58,7 +58,10 @@ namespace ReSharperPlugin.TestLinker.Utils
 				: TypeKind.Test;
 
 			var rootNamespace = linkedTypeProject.GetDefaultNamespace() ?? linkedTypeProject.Name;
-			var shortenedLinkedTypeNamespace = linkedTypeNamespace.TrimFromStart(rootNamespace);
+			var shortenedLinkedTypeNamespace = linkedTypeNamespace
+				.TrimFromStart(rootNamespace)
+				.TrimFromStart(".");
+
 			if (!MessageBox.ShowYesNo(
 				$"Class: {linkedTypeName}\r\nProject: {linkedTypeProject.Name}\r\nNamespace: {shortenedLinkedTypeNamespace}\r\n",
 				$"Create {linkedTypeKind} class for {sourceType.ShortName}?"))
