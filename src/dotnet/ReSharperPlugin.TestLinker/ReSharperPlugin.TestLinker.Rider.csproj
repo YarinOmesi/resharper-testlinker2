@@ -8,31 +8,15 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <PackageId>ReSharper.TestLinker</PackageId>
     <TargetFramework>net461</TargetFramework>
-    <IsPackable>True</IsPackable>
-    <DefineConstants>$(DefineConstants);RESHARPER</DefineConstants>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <AssemblyName>ReSharperPlugin.TestLinker</AssemblyName>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <DefineConstants>$(DefineConstants);RIDER</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="$(SdkVersion)">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <!-- TODO: https://github.com/NuGet/Home/issues/7154 -->
-    <PackageReference Include="Wave" Version="$(WaveVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Rider\**\*" />
-    <None Remove="Rider\**\*" />
-    <EmbeddedResource Remove="Rider\**\*" />
-    <Content Remove="Rider\**\*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="bin\$(AssemblyName)\$(Configuration)\$(AssemblyName).dll" PackagePath="dotFiles" Pack="true" />
-    <Content Include="bin\$(AssemblyName)\$(Configuration)\$(AssemblyName).pdb" PackagePath="dotFiles" Pack="true" />
+    <PackageReference Include="JetBrains.Rider.SDK" Version="$(SdkVersion)" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Xaml" />

@@ -6,9 +6,16 @@ TestLinker collects link data between types (i.e., production and test code) bas
 
 ## WARNING
 
-This is fork of [TestLinker plugin](https://github.com/matkoch/resharper-testlinker) originally developed by Matthias Koch
-- This fork was created for personal use and does not guaranteed to be supported;
-- This fork supports only Rider.
+This fork of the [TestLinker plugin](https://github.com/matkoch/resharper-testlinker) originally developed by Matthias Koch was created for personal use and does not guaranteed to be supported.
+
+### Building Locally
+
+- Please go though https://github.com/JetBrains/resharper-rider-plugin
+- Once initial setup is done, plugin can be build using:
+
+  ```bash
+  ./gradlew buildPlugin
+  ```
 
 ## Navigation
 
