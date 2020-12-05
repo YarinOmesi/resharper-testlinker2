@@ -7,20 +7,20 @@ using ReSharperPlugin.TestLinker.Navigation;
 
 namespace ReSharperPlugin.TestLinker.Actions
 {
-    [Action(
-        ActionId: Id,
-        Text: "Goto Linked Types With Derived Name",
-        Id = 17023,
-        IdeaShortcuts = new[] {"Shift+Control+O"},
-        VsShortcuts = new[] {"Shift+Control+O"})]
-    public class GotoLinkedTypesWithDerivedNameAction
-        : ContextNavigationActionBase<LinkedTypesWithDerivedNameNavigationProvider>
-    {
-        public const string Id = nameof(GotoLinkedTypesWithDerivedNameAction);
+	[Action(
+		Id,
+		"Goto Linked Types With Derived Name",
+		Id = 17023,
+		IdeaShortcuts = new[] {"Shift+Control+O"},
+		VsShortcuts = new[] {"Shift+Control+O"})]
+	public class GotoLinkedTypesWithDerivedNameAction
+		: ContextNavigationActionBase<LinkedTypesWithDerivedNameNavigationProvider>
+	{
+		public const string Id = nameof(GotoLinkedTypesWithDerivedNameAction);
 
-        public override IActionRequirement GetRequirement(IDataContext dataContext)
-        {
-            return CurrentPsiFileRequirementNoCaches.FromDataContext(dataContext);
-        }
-    }
+		public override IActionRequirement GetRequirement(IDataContext dataContext)
+		{
+			return CurrentPsiFileRequirementNoCaches.FromDataContext(dataContext);
+		}
+	}
 }

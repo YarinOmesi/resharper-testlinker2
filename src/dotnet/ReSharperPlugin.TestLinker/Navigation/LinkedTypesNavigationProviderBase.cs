@@ -10,42 +10,48 @@ using JetBrains.ReSharper.Features.Navigation.Features.FindHierarchy;
 
 namespace ReSharperPlugin.TestLinker.Navigation
 {
-    public abstract class LinkedTypesNavigationProviderBase<T> : HierarchyProviderBase<T, LinkedTypesSearchRequest, LinkedTypesSearchDescriptor>, INavigateFromHereProvider where T : class, IRequestContextSearch
-    {
-        protected LinkedTypesNavigationProviderBase(IFeaturePartsContainer manager)
-            : base(manager)
-        {
-        }
+	public abstract class
+		LinkedTypesNavigationProviderBase<T> :
+			HierarchyProviderBase<T, LinkedTypesSearchRequest, LinkedTypesSearchDescriptor>,
+			INavigateFromHereProvider where T : class, IRequestContextSearch
+	{
+		protected LinkedTypesNavigationProviderBase(IFeaturePartsContainer manager)
+			: base(manager)
+		{
+		}
 
-        public override string GetNotFoundMessage(SearchRequest request) => "No linked types found";
+		protected abstract string ActionId { get; }
+		protected abstract string NavigationMenuTitle { get; }
 
-        protected abstract string ActionId { get; }
-        protected abstract string NavigationMenuTitle { get; }
+		public IEnumerable<ContextNavigation> CreateWorkflow(IDataContext dataContext)
+		{
+			var solution = dataContext.GetData(ProjectModelDataConstants.SOLUTION);
+			var navigationExecutionHost = DefaultNavigationExecutionHost.GetInstance(solution);
 
-        protected override OccurrencePresentationOptions ProvideFeatureSpecificPresentationOptions(LinkedTypesSearchRequest searchRequest)
-        {
-            return new OccurrencePresentationOptions();
-        }
+			var execution = GetSearchesExecution(dataContext, navigationExecutionHost);
+			if (execution != null)
+				yield return new ContextNavigation(
+					NavigationMenuTitle,
+					ActionId,
+					NavigationActionGroup.Important,
+					execution);
+		}
 
-        protected override LinkedTypesSearchDescriptor CreateSearchDescriptor(LinkedTypesSearchRequest searchRequest, ICollection<IOccurrence> results)
-        {
-            return new LinkedTypesSearchDescriptor(searchRequest, results);
-        }
+		public override string GetNotFoundMessage(SearchRequest request)
+		{
+			return "No linked types found";
+		}
 
-        public IEnumerable<ContextNavigation> CreateWorkflow(IDataContext dataContext)
-        {
-            var solution = dataContext.GetData(ProjectModelDataConstants.SOLUTION);
-            var navigationExecutionHost = DefaultNavigationExecutionHost.GetInstance(solution);
+		protected override OccurrencePresentationOptions ProvideFeatureSpecificPresentationOptions(
+			LinkedTypesSearchRequest searchRequest)
+		{
+			return new OccurrencePresentationOptions();
+		}
 
-            var execution = GetSearchesExecution(dataContext, navigationExecutionHost);
-            if (execution != null)
-            {
-                yield return new ContextNavigation(
-                    NavigationMenuTitle,
-                    ActionId,
-                    NavigationActionGroup.Important,
-                    execution);
-            }
-        }
-    }
+		protected override LinkedTypesSearchDescriptor CreateSearchDescriptor(LinkedTypesSearchRequest searchRequest,
+			ICollection<IOccurrence> results)
+		{
+			return new LinkedTypesSearchDescriptor(searchRequest, results);
+		}
+	}
 }

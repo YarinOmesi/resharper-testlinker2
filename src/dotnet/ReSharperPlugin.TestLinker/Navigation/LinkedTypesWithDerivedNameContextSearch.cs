@@ -4,12 +4,12 @@ using JetBrains.TextControl;
 
 namespace ReSharperPlugin.TestLinker.Navigation
 {
-    [ShellFeaturePart]
-    public class LinkedTypesWithDerivedNameContextSearch : LinkedTypesContextSearchBase
-    {
-        protected override LinkedTypesSearchRequest CreateSearchRequest(ITypeElement type, ITextControl textControl)
-        {
-            return new LinkedTypesSearchRequest(type, textControl, derivedNamesOnly: true);
-        }
-    }
+	[ShellFeaturePart]
+	public class LinkedTypesWithDerivedNameContextSearch : LinkedTypesContextSearchBase
+	{
+		protected override LinkedTypesSearchRequest CreateSearchRequest(ITypeElement type, ITextControl textControl)
+		{
+			return new LinkedTypesSearchRequest(type, textControl, true);
+		}
+	}
 }

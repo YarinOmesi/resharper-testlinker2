@@ -9,13 +9,13 @@ using NUnit.Framework;
 
 namespace ReSharperPlugin.TestLinker.Tests
 {
-  [ZoneDefinition]
-  public interface ITestLinkerTestZone : ITestsEnvZone, IRequire<PsiFeatureTestZone>
-  {
-  }
+	[ZoneDefinition]
+	public interface ITestLinkerTestZone : ITestsEnvZone, IRequire<PsiFeatureTestZone>
+	{
+	}
 
-  [SetUpFixture]
-  public class TestEnvironment : ExtensionTestEnvironmentAssembly<ITestLinkerTestZone>
-  {
-  }
+	[SetUpFixture]
+	public class TestEnvironment : ExtensionTestEnvironmentAssembly<ITestLinkerTestZone>
+	{
+	}
 }
