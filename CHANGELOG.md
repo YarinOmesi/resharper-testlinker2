@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 # 2020.3.0
 - Support for Rider 2020.3
-- Remove all functionality except GotoLinkedTypesAction and new test classes creation
+- Removed action which search Test classes "by Name only"
 
 # 2020.2.1
 - Fixed plugin to signal that IDE restart is required

@@ -39,6 +39,7 @@ namespace ReSharperPlugin.TestLinker.Utils
 				MessageBox.ShowInfo(
 					"Could not find a template to create production/test class from.\r\n" +
 					"There must exist at least one pair of production+test classes for this project.");
+
 				return;
 			}
 
@@ -56,9 +57,11 @@ namespace ReSharperPlugin.TestLinker.Utils
 				? TypeKind.Production
 				: TypeKind.Test;
 
+			var rootNamespace = linkedTypeProject.GetDefaultNamespace() ?? linkedTypeProject.Name;
+			var shortenedLinkedTypeNamespace = linkedTypeNamespace.TrimFromStart(rootNamespace);
 			if (!MessageBox.ShowYesNo(
-				$"Class: {linkedTypeName}\r\nProject: {linkedTypeProject.Name}\r\nNamespace: {linkedTypeNamespace}\r\n",
-				$"Create {linkedTypeKind} Class for {sourceType.ShortName}?"))
+				$"Class: {linkedTypeName}\r\nProject: {linkedTypeProject.Name}\r\nNamespace: {shortenedLinkedTypeNamespace}\r\n",
+				$"Create {linkedTypeKind} class for {sourceType.ShortName}?"))
 				return;
 
 			var threading = solution.GetComponent<IThreading>();
@@ -87,10 +90,12 @@ namespace ReSharperPlugin.TestLinker.Utils
 		private static ICSharpFile GetLinkedTypeFile(string linkedTypeName, string linkedTypeNamespace,
 			ITypeElement templateLinkedType)
 		{
-			var elementFactory =
-				CSharpElementFactory.GetInstance(templateLinkedType.GetFirstDeclaration<IDeclaration>().NotNull());
+			var elementFactory = CSharpElementFactory.GetInstance(
+				templateLinkedType.GetFirstDeclaration<IDeclaration>().NotNull());
+
 			var templateLinkedTypeSourceFile = templateLinkedType.GetSingleOrDefaultSourceFile()
 				.NotNull("templateLinkedTypeSourceFile != null");
+
 			var templateFile = templateLinkedTypeSourceFile.GetPrimaryPsiFile().NotNull("templateFile != null");
 
 			var fileText = templateFile.GetText()

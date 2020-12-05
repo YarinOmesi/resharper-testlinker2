@@ -26,7 +26,7 @@ namespace ReSharperPlugin.TestLinker.Refactorings
 			return GetRelatedTypesWithDerivedName(declaredElement);
 		}
 
-		private IEnumerable<IDeclaredElement> GetRelatedTypesWithDerivedName(IDeclaredElement declaredElement)
+		private static IEnumerable<IDeclaredElement> GetRelatedTypesWithDerivedName(IDeclaredElement declaredElement)
 		{
 			var typeElement = declaredElement as ITypeElement;
 			if (typeElement == null)

@@ -1,6 +1,6 @@
 <idea-plugin require-restart="true">
   <id>testlinker-rider</id>
-  <name>TestLinker</name>
+  <name>TestLinker2</name>
   <version>_PLACEHOLDER_</version>
   <vendor url="https://github.com/vladyslav-burylov/resharper-testlinker">Matthias Koch</vendor>
   <idea-version since-build="_PLACEHOLDER_" until-build="_PLACEHOLDER_" />
@@ -11,11 +11,6 @@
             text="Goto Linked Types" description="">
       <keyboard-shortcut keymap="Visual Studio" first-keystroke="shift control I"/>
       <keyboard-shortcut keymap="Visual Studio OSX" first-keystroke="shift meta I"/>
-    </action>
-    <action id="GotoLinkedTypesWithDerivedName" class="com.jetbrains.rider.plugins.testlinker.GotoLinkedTypesWithDerivedNameAction"
-            text="Goto Linked Types With Derived Name" description="">
-      <keyboard-shortcut keymap="Visual Studio" first-keystroke="shift control O"/>
-      <keyboard-shortcut keymap="Visual Studio OSX" first-keystroke="shift meta O"/>
     </action>
   </actions>
 

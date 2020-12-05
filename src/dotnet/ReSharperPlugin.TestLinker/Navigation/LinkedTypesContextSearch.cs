@@ -9,7 +9,7 @@ namespace ReSharperPlugin.TestLinker.Navigation
 	{
 		protected override LinkedTypesSearchRequest CreateSearchRequest(ITypeElement type, ITextControl textControl)
 		{
-			return new LinkedTypesSearchRequest(type, textControl, false);
+			return new LinkedTypesSearchRequest(type, textControl);
 		}
 	}
 }

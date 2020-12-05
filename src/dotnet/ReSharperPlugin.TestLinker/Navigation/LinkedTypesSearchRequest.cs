@@ -14,34 +14,36 @@ namespace ReSharperPlugin.TestLinker.Navigation
 {
 	public sealed class LinkedTypesSearchRequest : SearchRequest
 	{
-		private readonly bool _derivedNamesOnly;
 		private readonly ITextControl _textControl;
 		private readonly ITypeElement _typeElement;
 
-		public LinkedTypesSearchRequest(ITypeElement typeElement, ITextControl textControl, bool derivedNamesOnly)
+		public LinkedTypesSearchRequest(ITypeElement typeElement, ITextControl textControl)
 		{
 			_typeElement = typeElement;
 			_textControl = textControl;
-			_derivedNamesOnly = derivedNamesOnly;
 		}
 
-		// TODO: LABEL
-		// TODO: GetPresentableName ??
 		public override string Title => $"Linked Types for {_typeElement.ShortName}";
 
 		public override ISolution Solution => _typeElement.GetSolution();
 
 		public override ICollection SearchTargets => new IDeclaredElementEnvoy[]
-			{new DeclaredElementEnvoy<IDeclaredElement>(_typeElement)};
+		{
+			new DeclaredElementEnvoy<IDeclaredElement>(_typeElement)
+		};
 
 		public override ICollection<IOccurrence> Search(IProgressIndicator progressIndicator)
 		{
 			if (!_typeElement.IsValid())
+			{
 				return EmptyList<IOccurrence>.InstanceList;
+			}
 
 			var linkedTypes = LinkedTypesUtil.GetLinkedTypes(_typeElement);
 			if (linkedTypes.Count == 0)
+			{
 				ModificationUtility.TryCreateTestOrProductionClass(_typeElement, _textControl);
+			}
 
 			bool IsDerivedName(ITypeElement typeElement)
 			{
@@ -51,7 +53,6 @@ namespace ReSharperPlugin.TestLinker.Navigation
 
 			return linkedTypes
 				.Select(x => new LinkedTypesOccurrence(x, OccurrenceType.Occurrence, IsDerivedName(x)))
-				.Where(x => !_derivedNamesOnly || x.HasNameDerived)
 				.ToArray();
 		}
 	}

@@ -14,7 +14,7 @@ This fork of the [TestLinker plugin](https://github.com/matkoch/resharper-testli
 - Once initial setup is done, plugin can be build using:
 
   ```bash
-  ./gradlew buildPlugin
+  ./gradlew :buildPlugin
   ```
 
 ## Navigation
