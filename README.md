@@ -1,6 +1,6 @@
 # TestLinker
 
-[![License](https://img.shields.io/github/license/vladyslav-burylov/resharper-testlinker)
+[License](https://img.shields.io/github/license/vladyslav-burylov/resharper-testlinker)
 
 TestLinker collects link data between types (i.e., production and test code) based on various mechanisms and provides various features based on that. For your convenience, TestLinker automatically takes base/derived types into account when meaningful.
 
