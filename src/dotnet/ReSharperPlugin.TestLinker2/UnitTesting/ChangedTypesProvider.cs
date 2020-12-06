@@ -19,7 +19,7 @@ namespace ReSharperPlugin.TestLinker2.UnitTesting
 {
 	[PsiComponent]
 	[SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable",
-		Justification = "TypesChanged is disposed via ")]
+		Justification = "TypesChanged is disposed via Lifetime")]
 	internal class ChangedTypesProvider
 	{
 		// ReSharper disable once InconsistentNaming
@@ -100,12 +100,18 @@ namespace ReSharperPlugin.TestLinker2.UnitTesting
 				foreach (var changedRange in changes)
 				{
 					var sourceFile = changedRange.Key.ToSourceFile();
+					if (sourceFile == null)
+					{
+						continue;
+					}
 
-					var containedTypes = _myServices.Symbols.GetTypesAndNamespacesInFile(sourceFile!)
-						.OfType<ITypeElement>();
+					var containedTypes = _myServices.Symbols.GetTypesAndNamespacesInFile(sourceFile)
+						.OfType<ITypeElement>().Where(x => x.IsValid());
+
 					var changedTypes = containedTypes.Where(
-						x => x.GetDeclarationsIn(sourceFile).Any(y =>
-							changedRange.Value.ContainedIn(y.GetDocumentRange().TextRange)));
+						x => x.GetDeclarationsIn(sourceFile)
+							.Select(t => t.GetDocumentRange().TextRange).Where(t => t.IsValid)
+							.Any(t => changedRange.Value.ContainedIn(t)));
 
 					allChangedTypes.AddRange(changedTypes);
 				}
@@ -120,8 +126,8 @@ namespace ReSharperPlugin.TestLinker2.UnitTesting
 
 		private KeyValuePair<IProjectFile, TextRange>[] GetChanges()
 		{
-			// TODO: try-finally?
 			KeyValuePair<IProjectFile, TextRange>[] changes;
+
 			lock (_myChangedRanges)
 			{
 				changes = _myChangedRanges.Where(x => x.Key.IsValid() && x.Value.IsValid).ToArray();
@@ -136,7 +142,9 @@ namespace ReSharperPlugin.TestLinker2.UnitTesting
 			lock (_myChangedRanges)
 			{
 				foreach (var pair in changes)
+				{
 					_myChangedRanges.AddOrUpdate(pair.Key, pair.Value, (file, range) => pair.Value.Join(range));
+				}
 			}
 		}
 	}
