@@ -31,7 +31,7 @@ namespace ReSharperPlugin.TestLinker.Options
 		{
 			_lifetime = lifetime;
 
-			AddHeader("Navigation");
+			AddHeader("Navigation (Test Linker)");
 
 			AddTextBox((TestLinkerSettings x) => x.NamingSuffixes, "Name suffixes for tests (comma-separated):");
 			AddTextBox((TestLinkerSettings x) => x.TypeofAttributeName, "Attribute name for typeof mentions:");
