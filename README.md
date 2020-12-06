@@ -1,12 +1,12 @@
-# TestLinker
+# Test Linker 2
 
-[![License](https://img.shields.io/github/license/vladyslav-burylov/resharper-testlinker)](LICENSE)
+[![License](https://img.shields.io/github/license/vladyslav-burylov/resharper-testlinker2)](LICENSE)
 
-TestLinker collects link data between types (i.e., production and test code) based on various mechanisms and provides various features based on that. For your convenience, TestLinker automatically takes base/derived types into account when meaningful.
+Test Linker 2 collects link data between types (i.e., production and test code) based on various mechanisms and provides various features based on that. For your convenience, Test Linker 2 automatically takes base/derived types into account when meaningful.
 
 ## WARNING
 
-This fork of the [TestLinker plugin](https://github.com/matkoch/resharper-testlinker) originally developed by Matthias Koch was created for personal use and does not guaranteed to be supported.
+This fork of the archieved [TestLinker plugin](https://github.com/matkoch/resharper-testlinker) originally developed by Matthias Koch was created for personal use and does not guaranteed to be supported.
 
 ### Building Locally
 

@@ -2,13 +2,13 @@
   <PropertyGroup>
     <SdkVersion>2020.2.4</SdkVersion>
 
-    <Title>TestLinker2</Title>
-    <Description>Semantically linking production and test code</Description>
+    <Title>Test Linker 2</Title>
+  <Description>Semantically linking production and test code. This is fork of TestLinker plugin.</Description>
     <Authors>Matthias Koch; Vladyslav Burylov</Authors>
     <Copyright>Copyright 2016-2020 Matthias Koch; Copyright 2020-$([System.DateTime]::Now.Year) Vladyslav Burylov</Copyright>
     <PackageTags>nunit xunit mspec mstest linker test code production testcop</PackageTags>
-    <PackageProjectUrl>https://github.com/vladyslav-burylov/resharper-testlinker</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/vladyslav-burylov/resharper-testlinker/master/LICENSE</PackageLicenseUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/vladyslav-burylov/resharper-testlinker/master/TestLinker.ico</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/vladyslav-burylov/resharper-testlinker2</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/vladyslav-burylov/resharper-testlinker2/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/vladyslav-burylov/resharper-testlinker2/master/TestLinker2.ico</PackageIconUrl>
   </PropertyGroup>
 </Project>

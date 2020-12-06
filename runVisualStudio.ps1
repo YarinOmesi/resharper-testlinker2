@@ -1,5 +1,5 @@
 Param(
-    $RootSuffix = "TestLinker",
+    $RootSuffix = "Test Linker 2",
     $Version = "9999.0.0"
 )
 

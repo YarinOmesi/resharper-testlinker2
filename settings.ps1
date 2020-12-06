@@ -1,6 +1,6 @@
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
-$PluginId = "ReSharperPlugin.TestLinker"
-$SolutionPath = "$PSScriptRoot\TestLinker.sln"
+$PluginId = "ReSharperPlugin.TestLinker2"
+$SolutionPath = "$PSScriptRoot\TestLinker2.sln"
 $SourceBasePath = "$PSScriptRoot\src\dotnet"
 
 $VsWhereOutput = [xml] (& "$PSScriptRoot\tools\vswhere.exe" -format xml)

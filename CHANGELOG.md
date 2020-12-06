@@ -5,10 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 2020.2.2
+## 2020.3.0
 
 - Support for Rider 2020.3
-- Removed action which search Test classes "by Name only"
+- Removed `ReSharper_GotoLinkedTypesWithDerivedName` action, use `ReSharper_GotoAllLinkedTypes` instead
 
 ## 2020.2.1
 
