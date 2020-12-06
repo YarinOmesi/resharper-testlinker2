@@ -22,7 +22,7 @@ This fork of the [TestLinker plugin](https://github.com/matkoch/resharper-testli
 <img src=misc/Demon_Navigate.gif />
 
 - [Goto Related Files](https://www.jetbrains.com/help/resharper/2016.1/Navigation_and_Search__Go_to_Related_Files.html) is extended with navigation points to production/test classes.
-- New shortcuts `ReSharper_GotoAllLinkedTypes` and `ReSharper_GotoLinkedTypesWithDerivedName` (assignable via keyboard options) that jumps between linked types. In case of multiple linked types, a dedicated popup menu is shown, which can also be displayed in [Find Results](https://www.jetbrains.com/help/resharper/2016.1/Reference__Windows__Find_Results_Window.html) window.
+- New shortcut `ReSharper_GotoAllLinkedTypes` (assignable via keyboard options) that jumps between linked types. In case of multiple linked types, a dedicated popup menu is shown, which can also be displayed in [Find Results](https://www.jetbrains.com/help/resharper/2016.1/Reference__Windows__Find_Results_Window.html) window.
 
 ## Test Creation
 
