@@ -23,8 +23,14 @@ namespace ReSharperPlugin.TestLinker2.Utils
 	{
 		public static IReadOnlyCollection<ITypeElement> GetLinkedTypes(IDataContext dataContext)
 		{
-			var solution = dataContext.GetData(ProjectModelDataConstants.SOLUTION).NotNull();
-			var textControl = dataContext.GetData(TextControlDataConstants.TEXT_CONTROL).NotNull();
+			var solution = dataContext.GetData(ProjectModelDataConstants.SOLUTION);
+			var textControl = dataContext.GetData(TextControlDataConstants.TEXT_CONTROL);
+
+			if (solution == null || textControl == null)
+			{
+				return Array.Empty<ITypeElement>();
+			}
+
 			var typesInContextProvider = dataContext.GetComponent<ITypesFromTextControlService>().NotNull();
 
 			var typesInContext = typesInContextProvider.GetTypesFromCaretOrFile(textControl, solution);

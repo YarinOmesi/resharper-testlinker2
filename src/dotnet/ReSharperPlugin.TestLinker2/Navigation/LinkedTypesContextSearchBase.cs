@@ -22,6 +22,10 @@ namespace ReSharperPlugin.TestLinker2.Navigation
 			IDeclaredElement initialTarget)
 		{
 			var textControl = dataContext.GetData(TextControlDataConstants.TEXT_CONTROL);
+			if (textControl == null)
+			{
+				return null;
+			}
 
 			return element is ClassLikeTypeElement type ? CreateSearchRequest(type, textControl) : null;
 		}

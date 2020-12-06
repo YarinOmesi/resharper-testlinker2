@@ -30,6 +30,9 @@
     <None Remove="Rider\**\*" />
     <EmbeddedResource Remove="Rider\**\*" />
     <Content Remove="Rider\**\*" />
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
   </ItemGroup>
 
   <ItemGroup>
