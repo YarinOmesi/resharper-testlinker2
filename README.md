@@ -7,7 +7,7 @@ based on various mechanisms and provides various features based on that.
 For your convenience, Test Linker 2 automatically takes base/derived types into
 account when meaningful.
 
-#Z# Features
+## Features
 
 - Adds hotkey for quick switching between tests/code
 - Synchronizes test/production classes renames
