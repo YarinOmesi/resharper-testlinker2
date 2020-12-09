@@ -1,10 +1,11 @@
 <idea-plugin require-restart="true">
-  <id>testlinker2-rider</id>
   <name>Test Linker 2</name>
+  <id>testlinker2-rider</id>
   <version>_PLACEHOLDER_</version>
   <vendor url="https://github.com/vladyslav-burylov/resharper-testlinker2">Vladyslav Burylov</vendor>
-  <idea-version since-build="_PLACEHOLDER_" until-build="_PLACEHOLDER_" />
+
   <depends>com.intellij.modules.rider</depends>
+  <idea-version since-build="_PLACEHOLDER_" until-build="_PLACEHOLDER_" />
 
   <actions>
     <action id="GotoLinkedTypes2" class="com.jetbrains.rider.plugins.testlinker2.GotoLinkedTypes2Action"
@@ -14,9 +15,16 @@
     </action>
   </actions>
 
+  <change-notes>Initial release of the plugin.</change-notes>
+
   <description>
 <![CDATA[
-<p>Semantically linking production and test code. This is fork of TestLinker plugin.</p>
+<ul>
+  <li>Adds hotkey for quick switching between tests/code</li>
+  <li>Synchronizes test/production classes renames</li>
+</ul>
+<br/>
+See <a href="https://github.com/vladyslav-burylov/resharper-testlinker2/blob/master/README.md">documentation</a> for more details, please.
 ]]>
   </description>
 

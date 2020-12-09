@@ -10,22 +10,6 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
-[*.{json,props}]
-indent_style = space
-indent_size = 2
-
-[*.js]
-indent_style = space
-indent_size = 4
-
-[*.config.js]
-indent_style = space
-indent_size = 2
-
-[*.{cshtml,html,razor}]
-indent_style = space
-indent_size = 2
-
-[*.{css,scss,sass}]
+[*.{json,props,xml}]
 indent_style = space
 indent_size = 2
