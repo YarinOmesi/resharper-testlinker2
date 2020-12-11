@@ -26,7 +26,7 @@ Link data is currently maintained via:
 ## Building Locally
 
 - Please go though https://github.com/JetBrains/resharper-rider-plugin
-- Once initial setup is done, plugin can be build using:
+- Once initial setup is done, plugin can be built using:
 
   ```bash
   ./gradlew :buildPlugin
