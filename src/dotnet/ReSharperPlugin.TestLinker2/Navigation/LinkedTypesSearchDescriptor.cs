@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using JetBrains.ReSharper.Feature.Services.Diagrams;
+using JetBrains.ReSharper.Feature.Services.Diagrams.TypeDependencies;
 using JetBrains.ReSharper.Feature.Services.Navigation.Descriptors;
 using JetBrains.ReSharper.Feature.Services.Navigation.Requests;
 using JetBrains.ReSharper.Feature.Services.Occurrences;

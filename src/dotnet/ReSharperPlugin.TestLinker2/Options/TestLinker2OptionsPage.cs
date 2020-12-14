@@ -8,7 +8,6 @@ using JetBrains.IDE.UI.Extensions;
 using JetBrains.IDE.UI.Options;
 using JetBrains.Lifetimes;
 using JetBrains.ReSharper.UnitTestFramework;
-using ReSharperPlugin.TestLinker2;
 
 namespace ReSharperPlugin.TestLinker2.Options
 {
