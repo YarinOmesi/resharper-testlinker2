@@ -31,3 +31,7 @@ Link data is currently maintained via:
   ```bash
   ./gradlew :buildPlugin
   ```
+
+- Other useful scripts:
+  - `./gradlew :rdgen` - regenerate data contract
+  - `./gradlew :runIde` - run plugins inside sandbox (IDE version is specified by `gradle.properties`)
