@@ -12,7 +12,7 @@ account when meaningful.
 - Adds hotkey for quick switching between tests/code
 - Synchronizes test/production classes renames
 
-<img src="misc/Demo.gif"  alt="demo video"/>
+<img src="misc/Demo.gif" alt="demo video"/>
 
 ## Configuration
 
