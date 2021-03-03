@@ -1,7 +1,6 @@
 <Project>
   <PropertyGroup>
     <SdkVersion>2020.3.0</SdkVersion>
-
     <Title>Test Linker 2</Title>
   <Description>Semantically linking production and test code. This is fork of TestLinker plugin.</Description>
     <Authors>Matthias Koch; Vladyslav Burylov</Authors>
