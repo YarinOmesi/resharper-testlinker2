@@ -8,7 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::System.Windows.Markup.XmlnsDefinitionAttribute("urn:shemas-jetbrains-com:ui-application-icons-test-linker-2", "ReSharperPlugin.TestLinker2")]
 [assembly: global::JetBrains.UI.Icons.CompiledIcons.CompiledIconsPackAttribute(IconPackResourceIdentification="ReSharperPlugin.TestLinker2;component/TestLinker2Icons/ThemedIcons.TestLinker2.Gener" +
 	"ated.Xaml", IconNames=new string[] {
 		"TestLinker2"})]

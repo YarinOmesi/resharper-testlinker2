@@ -42,8 +42,6 @@ class TestLinker2Model internal constructor(
     //hash code trait
     //pretty print
     override fun print(printer: PrettyPrinter)  {
-        printer.println("TestLinker2Model (")
-        printer.print(")")
     }
     //deepClone
     override fun deepClone(): TestLinker2Model   {
