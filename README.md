@@ -33,5 +33,4 @@ Link data is currently maintained via:
   ```
 
 - Other useful scripts:
-  - `./gradlew :rdgen` - regenerate data contract
   - `./gradlew :runIde` - run plugins inside sandbox (IDE version specified by `gradle.properties`)
