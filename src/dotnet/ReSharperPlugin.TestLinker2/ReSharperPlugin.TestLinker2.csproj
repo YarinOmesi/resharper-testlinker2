@@ -11,29 +11,18 @@
 
   <PropertyGroup>
     <PackageId>ReSharper.TestLinker2</PackageId>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <IsPackable>True</IsPackable>
     <DefineConstants>$(DefineConstants);RESHARPER</DefineConstants>
     <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.ReSharper.SDK" Version="$(SdkVersion)">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="JetBrains.ReSharper.SDK" Version="$(SdkVersion)" PrivateAssets="all" />
     <!-- TODO: https://github.com/NuGet/Home/issues/7154 -->
-    <PackageReference Include="Wave" Version="$(WaveVersion)" />
+    <PackageReference Include="Wave" Version="[$(WaveVersion),$(UpperWaveVersion))" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Rider\**\*" />
-    <None Remove="Rider\**\*" />
-    <EmbeddedResource Remove="Rider\**\*" />
-    <Content Remove="Rider\**\*" />
-    <Compile Remove="bin\**" />
-    <EmbeddedResource Remove="bin\**" />
-    <None Remove="bin\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Include="bin\$(AssemblyName)\$(Configuration)\$(AssemblyName).dll" PackagePath="dotFiles" Pack="true" />
@@ -46,12 +35,12 @@
   <ItemGroup Condition="'$(OS)' != 'Unix'">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <ThemedIconsXamlV3 Include="**\TestLinker2.xaml">
-      <ThemeColumns>Color</ThemeColumns>
-      <RemoveBackgroundElement>True</RemoveBackgroundElement>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </ThemedIconsXamlV3>
+<!--    <ThemedIconsXamlV3 Include="**\TestLinker2.xaml">-->
+<!--      <ThemeColumns>Color</ThemeColumns>-->
+<!--      <RemoveBackgroundElement>True</RemoveBackgroundElement>-->
+<!--      <SubType>Designer</SubType>-->
+<!--      <Generator>MSBuild:Compile</Generator>-->
+<!--    </ThemedIconsXamlV3>-->
     <!--<ThemedIconsXamlV3 Include="**\*-graydark.xaml">-->
     <!--<ThemeColumns>GrayDark</ThemeColumns>-->
     <!--<RemoveBackgroundElement>True</RemoveBackgroundElement>-->
