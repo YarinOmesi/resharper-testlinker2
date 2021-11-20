@@ -25,7 +25,7 @@ jobs:
       run: sudo apt-get update; sudo apt-get install -y java-11-amazon-corretto-jdk
     - name: Mark gradlew as executable
       run: chmod 777 gradlew    
-    - name: Build plugin
+    - name: Build Rider and ReSharper plugin
       uses: gradle/gradle-build-action@v2
       with:
         arguments: buildPlugin
