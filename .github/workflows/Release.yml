@@ -12,7 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Extract Git tag
+      uses: olegtarasov/get-tag@v2.1
+        id: tagName
+    - name: Checkout code
+      uses: actions/checkout@v2
     - name: Install and setup .NET
       uses: actions/setup-dotnet@v1
       with:
@@ -25,7 +29,12 @@ jobs:
       run: sudo apt-get update; sudo apt-get install -y java-11-amazon-corretto-jdk
     - name: Mark gradlew as executable
       run: chmod 777 gradlew    
-    - name: Build plugin
+    - name: Build Rider and ReSharper plugin
       uses: gradle/gradle-build-action@v2
       with:
         arguments: publishPlugin -PPublishToken=${{ secrets.JETBRAINSPUBLISHTOKEN }}
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: /output/ReSharper.TestLinker2.*.nupkg
+        tag_name: v${{ steps.tagName.outputs.tag }}
