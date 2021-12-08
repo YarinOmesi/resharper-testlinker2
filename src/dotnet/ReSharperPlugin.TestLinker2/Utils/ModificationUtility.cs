@@ -17,7 +17,8 @@ using JetBrains.ReSharper.Psi.Files;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Util;
 using JetBrains.ReSharper.Resources.Shell;
-using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Elements;
+using JetBrains.ReSharper.UnitTestFramework.Features;
 using JetBrains.TextControl;
 using JetBrains.Util;
 
@@ -52,7 +53,7 @@ namespace ReSharperPlugin.TestLinker2.Utils
 			var linkedTypeSourceFile = templateLinkedType.GetSingleOrDefaultSourceFile()
 				.NotNull("linkedTypeSourceFile != null");
 			var linkedTypeProject = linkedTypeSourceFile.GetProject().NotNull("linkedTypeProject != null");
-			var linkedTypeKind = !solution.GetComponent<IUnitTestElementStuff>()
+			var linkedTypeKind = !solution.GetComponent<IUnitTestPsiManager>()
 				.IsElementOfKind(templateLinkedType, UnitTestElementKind.TestContainer)
 				? TypeKind.Production
 				: TypeKind.Test;

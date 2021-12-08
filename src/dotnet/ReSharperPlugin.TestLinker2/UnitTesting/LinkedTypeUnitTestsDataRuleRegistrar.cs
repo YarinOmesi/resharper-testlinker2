@@ -2,9 +2,10 @@
 using JetBrains.Application.DataContext;
 using JetBrains.Lifetimes;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.UnitTestFramework;
-using JetBrains.ReSharper.UnitTestFramework.Common;
+using JetBrains.ReSharper.UnitTestFramework.Actions;
 using JetBrains.ReSharper.UnitTestFramework.Criteria;
+using JetBrains.ReSharper.UnitTestFramework.Execution.Launch;
+using JetBrains.ReSharper.UnitTestFramework.Features;
 using JetBrains.Util;
 using ReSharperPlugin.TestLinker2.Utils;
 
@@ -13,18 +14,18 @@ namespace ReSharperPlugin.TestLinker2.UnitTesting
 	[SolutionComponent]
 	public class LinkedTypeUnitTestsDataRuleRegistrar
 	{
-		private readonly IUnitTestElementStuff _unitTestElementStuff;
+		private readonly IUnitTestPsiManager _unitTestElementStuff;
 
 		public LinkedTypeUnitTestsDataRuleRegistrar(
 			Lifetime lifetime,
 			DataContexts dataContexts,
-			IUnitTestElementStuff unitTestElementStuff)
+			IUnitTestPsiManager unitTestElementStuff)
 		{
 			_unitTestElementStuff = unitTestElementStuff;
 
 			var dataRule = new DataRule<UnitTestElements>.DesperateDataRule(
 				"ProjectModelToUnitTestElements",
-				UnitTestDataConstants.UnitTestElements.SELECTED,
+				UnitTestDataConstants.Elements.SELECTED,
 				LinkedTypeUnitTestsDataRule);
 
 			dataContexts.RegisterDataRule(lifetime, dataRule);

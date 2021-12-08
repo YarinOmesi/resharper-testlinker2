@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Lifetimes;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.UnitTestFramework;
+using JetBrains.ReSharper.UnitTestFramework.Execution;
+using JetBrains.ReSharper.UnitTestFramework.Features;
 using JetBrains.Util;
 using ReSharperPlugin.TestLinker2.Utils;
 
@@ -11,13 +12,13 @@ namespace ReSharperPlugin.TestLinker2.UnitTesting
 	[PsiComponent]
 	internal class LinkedTestInvalidator
 	{
-		private readonly IUnitTestElementStuff _unitTestElementStuff;
+		private readonly IUnitTestPsiManager _unitTestElementStuff;
 		private readonly IUnitTestResultManager _unitTestResultManager;
 
 		public LinkedTestInvalidator(
 			Lifetime lifetime,
 			ChangedTypesProvider changedTypesProvider,
-			IUnitTestElementStuff unitTestElementStuff,
+			IUnitTestPsiManager unitTestElementStuff,
 			IUnitTestResultManager unitTestResultManager)
 		{
 			_unitTestElementStuff = unitTestElementStuff;
