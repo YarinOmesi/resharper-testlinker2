@@ -10,7 +10,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <PackageId>ReSharper.TestLinker2</PackageId>
+    <PackageId>ReSharperPlugin.TestLinker2</PackageId>
     <TargetFramework>net472</TargetFramework>
     <IsPackable>True</IsPackable>
     <DefineConstants>$(DefineConstants);RESHARPER</DefineConstants>
