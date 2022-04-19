@@ -25,7 +25,7 @@ namespace ReSharperPlugin.TestLinker2.UnitTesting
 
 			var dataRule = new DataRule<UnitTestElements>.DesperateDataRule(
 				"ProjectModelToUnitTestElements",
-				UnitTestDataConstants.Elements.SELECTED,
+				new UnitTestDataConstants.ElementsDataConstants("UnitTestElements").Selected,
 				LinkedTypeUnitTestsDataRule);
 
 			dataContexts.RegisterDataRule(lifetime, dataRule);

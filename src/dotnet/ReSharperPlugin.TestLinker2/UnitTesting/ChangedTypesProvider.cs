@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using JetBrains.Application;
 using JetBrains.Application.changes;
 using JetBrains.Application.Threading;
 using JetBrains.DataFlow;
@@ -81,7 +82,7 @@ namespace ReSharperPlugin.TestLinker2.UnitTesting
 				_myServices.Files.CommitAllDocumentsAsync(
 					() =>
 					{
-						var the = new InterruptableReadActivityThe(_myLifetime, _myShellLocks, () => false)
+						var the = new InterruptableReadActivityThe(_myLifetime, _myShellLocks, new InterruptionSet())
 							{FuncRun = Invalidate};
 						the.DoStart();
 					},
