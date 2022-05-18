@@ -20,13 +20,13 @@ jobs:
     - name: Install and setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0' 
-    - name: Build and publish Rider and ReSharper plugin
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: publishPlugin -PPublishToken=${{ secrets.JETBRAINSPUBLISHTOKEN }}
+        dotnet-version: '6.0'
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
       with:
         files: /output/ReSharper.TestLinker2.*.nupkg
         tag_name: ${{ steps.tagName.outputs.tag }}
+    - name: Build and publish Rider and ReSharper plugin
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: publishPlugin -PPublishToken=${{ secrets.JETBRAINSPUBLISHTOKEN }}
