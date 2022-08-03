@@ -28,7 +28,7 @@ jobs:
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
       with:
-        files: /output/ReSharper.TestLinker2.*.nupkg
+        files: ${{ github.workspace }}\output\ReSharperPlugin.TestLinker2.*.nupkg
         tag_name: ${{ steps.tagName.outputs.tag }}
     - name: Publish Rider and ReSharper plugin
       uses: gradle/gradle-build-action@v2
