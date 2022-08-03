@@ -193,11 +193,15 @@ publishPlugin {
     dependsOn buildPlugin
     token = "${PublishToken}"
 
-    doLast {
-        exec {
-            executable "dotnet"
-            args "nuget","push","${rootDir}/output/${DotnetPluginId}.${version}.nupkg","--api-key","${PublishToken}","--source","https://plugins.jetbrains.com"
-            workingDir rootDir
-        }
-    }
+// The following block is responsible for uploading the R# part of the plugin.
+// We don't need this yet, because the plugin is meant for Rider only. Therefore it is disabled.
+// See here for more information: https://github.com/JetBrains/resharper-rider-plugin/issues/46
+//
+//     doLast {
+//         exec {
+//             executable "dotnet"
+//             args "nuget","push","${rootDir}/output/${DotnetPluginId}.${version}.nupkg","--api-key","${PublishToken}","--source","https://plugins.jetbrains.com"
+//             workingDir rootDir
+//         }
+//     }
 }
