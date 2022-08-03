@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <SdkVersion>2022.2.0-eap09</SdkVersion><!-- Must all be three-digit, otherwise building the .NET part will fail -->
+    <SdkVersion>2022.2.0</SdkVersion><!-- Must all be three-digit, otherwise building the .NET part will fail -->
     <Title>Test Linker 2</Title>
   <Description>Semantically linking production and test code. This is fork of TestLinker plugin.</Description>
     <Authors>Matthias Koch; Vladyslav Burylov; Mirko Ulfig</Authors>
