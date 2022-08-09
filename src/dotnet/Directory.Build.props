@@ -3,6 +3,7 @@
   <PropertyGroup>
     <LangVersion>Latest</LangVersion>
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <NoWarn>MSB3277</NoWarn>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
 
