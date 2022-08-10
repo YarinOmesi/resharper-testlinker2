@@ -10,8 +10,7 @@
   <actions>
     <action id="GotoLinkedTypes2" class="com.jetbrains.rider.plugins.testlinker2.GotoLinkedTypes2Action"
             text="Goto Linked Types (Test/Production)" description="">
-      <keyboard-shortcut keymap="Visual Studio" first-keystroke="shift control I"/>
-      <keyboard-shortcut keymap="Visual Studio OSX" first-keystroke="shift meta I"/>
+      <keyboard-shortcut keymap="Visual Studio" first-keystroke="alt F7"/>
     </action>
   </actions>
 
