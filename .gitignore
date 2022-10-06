@@ -4,7 +4,7 @@
 build
 output
 .gradle
-.tmp
+*.tmp
 
 # User-specific files
 *.suo
@@ -20,3 +20,4 @@ _dotTrace*
 .project
 .vscode
 .settings
+packages

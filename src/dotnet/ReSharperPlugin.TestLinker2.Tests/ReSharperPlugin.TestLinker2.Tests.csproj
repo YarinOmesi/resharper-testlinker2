@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.7.0" />
+    <PackageReference Include="JetBrains.ReSharper.SDK.Tests" Version="$(SdkVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageReference Include="Moq.AutoMock" Version="3.4.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="test/**/*" />
+    <None Include="test/**/*" />
+    <None Include="test/data/**/*.tmp"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReSharperPlugin.TestLinker2\ReSharperPlugin.TestLinker2.Rider.csproj" />
+  </ItemGroup>
+
+</Project>
