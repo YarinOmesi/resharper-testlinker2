@@ -10,38 +10,37 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Resources.Shell;
 using JetBrains.Util;
 
-namespace ReSharperPlugin.TestLinker2.Navigation
+namespace ReSharperPlugin.TestLinker2.Navigation;
+
+public sealed class LinkedTypesOccurrenceBrowserDescriptor : OccurrenceBrowserDescriptor
 {
-	public sealed class LinkedTypesOccurrenceBrowserDescriptor : OccurrenceBrowserDescriptor
+	private readonly TreeSectionModel _model;
+
+	public LinkedTypesOccurrenceBrowserDescriptor(
+		ISolution solution,
+		ICollection<ITypeElement> typesInContext,
+		ICollection<IOccurrence> linkedTypeOccurrences,
+		IProgressIndicator indicator = null)
+		: base(solution)
 	{
-		private readonly TreeSectionModel _model;
+		_model = new TreeSectionModel();
 
-		public LinkedTypesOccurrenceBrowserDescriptor(
-			ISolution solution,
-			ICollection<ITypeElement> typesInContext,
-			ICollection<IOccurrence> linkedTypeOccurrences,
-			IProgressIndicator indicator = null)
-			: base(solution)
+		DrawElementExtensions = true;
+		Title.Value =
+			$"LinkedTypesOccurrenceBrowserDescriptor: Linked types for {typesInContext.Take(3).Select(x => x.GetClrName().ShortName).Join(", ")}{(typesInContext.Count > 3 ? "..." : string.Empty)}";
+
+		using (ReadLockCookie.Create())
 		{
-			_model = new TreeSectionModel();
-
-			DrawElementExtensions = true;
-			Title.Value =
-				$"LinkedTypesOccurrenceBrowserDescriptor: Linked types for {typesInContext.Take(3).Select(x => x.GetClrName().ShortName).Join(", ")}{(typesInContext.Count > 3 ? "..." : string.Empty)}";
-
-			using (ReadLockCookie.Create())
-			{
-				SetResults(linkedTypeOccurrences, indicator);
-			}
+			SetResults(linkedTypeOccurrences, indicator);
 		}
+	}
 
-		public override TreeModel Model => _model;
+	public override TreeModel Model => _model;
 
-		protected override void SetResults(ICollection<IOccurrence> items, IProgressIndicator indicator = null,
-			bool mergeItems = true)
-		{
-			base.SetResults(items, indicator, mergeItems);
-			RequestUpdate(UpdateKind.Structure, true);
-		}
+	protected override void SetResults(ICollection<IOccurrence> items, IProgressIndicator indicator = null,
+		bool mergeItems = true)
+	{
+		base.SetResults(items, indicator, mergeItems);
+		RequestUpdate(UpdateKind.Structure, true);
 	}
 }

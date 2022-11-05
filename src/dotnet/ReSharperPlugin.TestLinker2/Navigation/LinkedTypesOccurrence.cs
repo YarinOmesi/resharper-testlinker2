@@ -9,59 +9,58 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.TextControl;
 
-namespace ReSharperPlugin.TestLinker2.Navigation
+namespace ReSharperPlugin.TestLinker2.Navigation;
+
+public class LinkedTypesOccurrence : DeclaredElementOccurrence
 {
-	public class LinkedTypesOccurrence : DeclaredElementOccurrence
+	public LinkedTypesOccurrence(
+		[NotNull] IDeclaredElement element,
+		OccurrenceType occurrenceKind,
+		bool hasNameDerived)
+		: base(element, occurrenceKind)
 	{
-		public LinkedTypesOccurrence(
-			[NotNull] IDeclaredElement element,
-			OccurrenceType occurrenceKind,
-			bool hasNameDerived)
-			: base(element, occurrenceKind)
+		HasNameDerived = hasNameDerived;
+	}
+
+	public bool HasNameDerived { get; }
+
+	public override bool Navigate(
+		ISolution solution,
+		PopupWindowContextSource windowContext,
+		bool transferFocus,
+		TabOptions tabOptions = TabOptions.Default)
+	{
+		var textControlManager = solution.GetComponent<ITextControlManager>();
+
+		var declaredElement = OccurrenceElement.NotNull().GetValidDeclaredElement();
+		if (declaredElement == null)
+			return false;
+
+		foreach (var declaration in declaredElement.GetDeclarations())
 		{
-			HasNameDerived = hasNameDerived;
-		}
+			var sourceFile = declaration.GetSourceFile();
+			if (sourceFile == null)
+				continue;
 
-		public bool HasNameDerived { get; }
-
-		public override bool Navigate(
-			ISolution solution,
-			PopupWindowContextSource windowContext,
-			bool transferFocus,
-			TabOptions tabOptions = TabOptions.Default)
-		{
-			var textControlManager = solution.GetComponent<ITextControlManager>();
-
-			var declaredElement = OccurrenceElement.NotNull().GetValidDeclaredElement();
-			if (declaredElement == null)
-				return false;
-
-			foreach (var declaration in declaredElement.GetDeclarations())
+			foreach (var textControl in textControlManager.TextControls)
 			{
-				var sourceFile = declaration.GetSourceFile();
-				if (sourceFile == null)
+				if (textControl.Document != sourceFile.Document)
 					continue;
 
-				foreach (var textControl in textControlManager.TextControls)
-				{
-					if (textControl.Document != sourceFile.Document)
-						continue;
+				var declarationRange = declaration.GetDocumentRange();
+				var textControlOffset = textControl.Caret.DocumentOffset();
+				if (!declarationRange.Contains(textControlOffset))
+					continue;
 
-					var declarationRange = declaration.GetDocumentRange();
-					var textControlOffset = textControl.Caret.DocumentOffset();
-					if (!declarationRange.Contains(textControlOffset))
-						continue;
-
-					var popupWindowContextSource = solution.GetComponent<IMainWindowPopupWindowContext>().Source;
-					return sourceFile.Navigate(
-						textControl.Selection.OneDocRangeWithCaret(),
-						transferFocus,
-						tabOptions,
-						popupWindowContextSource);
-				}
+				var popupWindowContextSource = solution.GetComponent<IMainWindowPopupWindowContext>().Source;
+				return sourceFile.Navigate(
+					textControl.Selection.OneDocRangeWithCaret(),
+					transferFocus,
+					tabOptions,
+					popupWindowContextSource);
 			}
-
-			return base.Navigate(solution, windowContext, transferFocus, tabOptions);
 		}
+
+		return base.Navigate(solution, windowContext, transferFocus, tabOptions);
 	}
 }

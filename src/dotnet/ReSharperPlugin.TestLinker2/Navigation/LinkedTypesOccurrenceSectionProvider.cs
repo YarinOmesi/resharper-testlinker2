@@ -7,26 +7,25 @@ using JetBrains.ReSharper.Feature.Services.Tree;
 using JetBrains.ReSharper.Feature.Services.Tree.SectionsManagement;
 using JetBrains.Util;
 
-namespace ReSharperPlugin.TestLinker2.Navigation
-{
-	[ShellFeaturePart]
-	public class LinkedTypesOccurrenceSectionProvider : OccurrenceSectionProvider
-	{
-		public override bool IsApplicable([NotNull] IOccurrenceBrowserDescriptor descriptor)
-		{
-			return descriptor is LinkedTypesOccurrenceBrowserDescriptor;
-		}
+namespace ReSharperPlugin.TestLinker2.Navigation;
 
-		public override ICollection<TreeSection> GetTreeSections([NotNull] IOccurrenceBrowserDescriptor descriptor)
-		{
-			return descriptor.OccurrenceSections.Select(
-					x =>
-					{
-						var caption =
-							$"LinkedTypesOccurrenceSectionProvider: Found {x.Items.Count} linked {NounUtil.ToPluralOrSingular("type", x.Items.Count)}";
-						return new TreeSection(x.Model, caption);
-					})
-				.ToList();
-		}
+[ShellFeaturePart]
+public class LinkedTypesOccurrenceSectionProvider : OccurrenceSectionProvider
+{
+	public override bool IsApplicable([NotNull] IOccurrenceBrowserDescriptor descriptor)
+	{
+		return descriptor is LinkedTypesOccurrenceBrowserDescriptor;
+	}
+
+	public override ICollection<TreeSection> GetTreeSections([NotNull] IOccurrenceBrowserDescriptor descriptor)
+	{
+		return descriptor.OccurrenceSections.Select(
+				x =>
+				{
+					var caption =
+						$"LinkedTypesOccurrenceSectionProvider: Found {x.Items.Count} linked {NounUtil.ToPluralOrSingular("type", x.Items.Count)}";
+					return new TreeSection(x.Model, caption);
+				})
+			.ToList();
 	}
 }

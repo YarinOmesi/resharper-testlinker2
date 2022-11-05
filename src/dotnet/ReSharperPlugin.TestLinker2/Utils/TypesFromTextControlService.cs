@@ -9,70 +9,69 @@ using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
 
-namespace ReSharperPlugin.TestLinker2.Utils
+namespace ReSharperPlugin.TestLinker2.Utils;
+
+public interface ITypesFromTextControlService
 {
-	public interface ITypesFromTextControlService
+	IEnumerable<ITypeElement> GetTypesFromCaretOrFile(ITextControl textControl, ISolution solution);
+	IEnumerable<ITypeElement> GetTypesNearCaretOrFile(ITextControl textControl, ISolution solution);
+}
+
+[PsiComponent]
+public class TypesFromTextControlService : ITypesFromTextControlService
+{
+	#region ITypesFromTextControlService
+
+	public IEnumerable<ITypeElement> GetTypesFromCaretOrFile(ITextControl textControl, ISolution solution)
 	{
-		IEnumerable<ITypeElement> GetTypesFromCaretOrFile(ITextControl textControl, ISolution solution);
-		IEnumerable<ITypeElement> GetTypesNearCaretOrFile(ITextControl textControl, ISolution solution);
+		var classDeclaration =
+			TextControlToPsi.GetElementFromCaretPosition<ITypeDeclaration>(solution, textControl);
+		if (classDeclaration != null)
+			return new[] {classDeclaration.DeclaredElement};
+
+		var symbolCache = solution.GetPsiServices().Symbols;
+		var psiSourceFile = textControl.Document.GetPsiSourceFile(solution);
+		if (psiSourceFile != null)
+			return symbolCache.GetTypesAndNamespacesInFile(psiSourceFile).OfType<ITypeElement>();
+
+		return EmptyList<ITypeElement>.InstanceList;
 	}
 
-	[PsiComponent]
-	public class TypesFromTextControlService : ITypesFromTextControlService
+	public IEnumerable<ITypeElement> GetTypesNearCaretOrFile(ITextControl textControl, ISolution solution)
 	{
-		#region ITypesFromTextControlService
+		var typesFromCaretOrFile = GetTypesFromCaretOrFile(textControl, solution);
+		var typesFromNamespace = GetTypesFromNamespace(textControl, solution);
+		var typesFromProject = GetTypesFromProject(textControl, solution);
 
-		public IEnumerable<ITypeElement> GetTypesFromCaretOrFile(ITextControl textControl, ISolution solution)
-		{
-			var classDeclaration =
-				TextControlToPsi.GetElementFromCaretPosition<ITypeDeclaration>(solution, textControl);
-			if (classDeclaration != null)
-				return new[] {classDeclaration.DeclaredElement};
-
-			var symbolCache = solution.GetPsiServices().Symbols;
-			var psiSourceFile = textControl.Document.GetPsiSourceFile(solution);
-			if (psiSourceFile != null)
-				return symbolCache.GetTypesAndNamespacesInFile(psiSourceFile).OfType<ITypeElement>();
-
-			return EmptyList<ITypeElement>.InstanceList;
-		}
-
-		public IEnumerable<ITypeElement> GetTypesNearCaretOrFile(ITextControl textControl, ISolution solution)
-		{
-			var typesFromCaretOrFile = GetTypesFromCaretOrFile(textControl, solution);
-			var typesFromNamespace = GetTypesFromNamespace(textControl, solution);
-			var typesFromProject = GetTypesFromProject(textControl, solution);
-
-			return typesFromCaretOrFile
-				.Concat(typesFromNamespace)
-				.Concat(typesFromProject);
-		}
-
-		private IEnumerable<ITypeElement> GetTypesFromNamespace(ITextControl textControl, ISolution solution)
-		{
-			var symbolCache = solution.GetPsiServices().Symbols;
-			var namespaceDeclaration =
-				TextControlToPsi.GetElementFromCaretPosition<INamespaceDeclaration>(solution, textControl);
-			if (namespaceDeclaration?.DeclaredElement != null)
-			{
-				var symbolScope = symbolCache.GetSymbolScope(LibrarySymbolScope.FULL, true);
-				return namespaceDeclaration.DeclaredElement.GetNestedTypeElements(symbolScope);
-			}
-
-			return EmptyList<ITypeElement>.InstanceList;
-		}
-
-		private IEnumerable<ITypeElement> GetTypesFromProject(ITextControl textControl, ISolution solution)
-		{
-			var symbolCache = solution.GetPsiServices().Symbols;
-			var psiSourceFile = textControl.Document.GetPsiSourceFile(solution).NotNull();
-			var symbolScope = symbolCache.GetSymbolScope(psiSourceFile.PsiModule, false, false);
-
-			foreach (var name in symbolScope.GetAllShortNames())
-			foreach (var element in symbolScope.GetElementsByShortName(name).OfType<ITypeElement>())
-				yield return element;
-		}
-
-		#endregion
+		return typesFromCaretOrFile
+			.Concat(typesFromNamespace)
+			.Concat(typesFromProject);
 	}
+
+	private IEnumerable<ITypeElement> GetTypesFromNamespace(ITextControl textControl, ISolution solution)
+	{
+		var symbolCache = solution.GetPsiServices().Symbols;
+		var namespaceDeclaration =
+			TextControlToPsi.GetElementFromCaretPosition<INamespaceDeclaration>(solution, textControl);
+		if (namespaceDeclaration?.DeclaredElement != null)
+		{
+			var symbolScope = symbolCache.GetSymbolScope(LibrarySymbolScope.FULL, true);
+			return namespaceDeclaration.DeclaredElement.GetNestedTypeElements(symbolScope);
+		}
+
+		return EmptyList<ITypeElement>.InstanceList;
+	}
+
+	private IEnumerable<ITypeElement> GetTypesFromProject(ITextControl textControl, ISolution solution)
+	{
+		var symbolCache = solution.GetPsiServices().Symbols;
+		var psiSourceFile = textControl.Document.GetPsiSourceFile(solution).NotNull();
+		var symbolScope = symbolCache.GetSymbolScope(psiSourceFile.PsiModule, false, false);
+
+		foreach (var name in symbolScope.GetAllShortNames())
+		foreach (var element in symbolScope.GetElementsByShortName(name).OfType<ITypeElement>())
+			yield return element;
+	}
+
+	#endregion
 }

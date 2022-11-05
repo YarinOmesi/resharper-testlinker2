@@ -9,33 +9,32 @@ using JetBrains.ReSharper.UnitTestFramework.Features;
 using JetBrains.Util;
 using ReSharperPlugin.TestLinker2.Utils;
 
-namespace ReSharperPlugin.TestLinker2.UnitTesting
+namespace ReSharperPlugin.TestLinker2.UnitTesting;
+
+[SolutionComponent]
+public class LinkedTypeUnitTestsDataRuleRegistrar
 {
-	[SolutionComponent]
-	public class LinkedTypeUnitTestsDataRuleRegistrar
+	private readonly IUnitTestPsiManager _unitTestElementStuff;
+
+	public LinkedTypeUnitTestsDataRuleRegistrar(
+		Lifetime lifetime,
+		DataContexts dataContexts,
+		IUnitTestPsiManager unitTestElementStuff)
 	{
-		private readonly IUnitTestPsiManager _unitTestElementStuff;
+		_unitTestElementStuff = unitTestElementStuff;
 
-		public LinkedTypeUnitTestsDataRuleRegistrar(
-			Lifetime lifetime,
-			DataContexts dataContexts,
-			IUnitTestPsiManager unitTestElementStuff)
-		{
-			_unitTestElementStuff = unitTestElementStuff;
+		var dataRule = new DataRule<UnitTestElements>.DesperateDataRule(
+			"ProjectModelToUnitTestElements",
+			new UnitTestDataConstants.ElementsDataConstants("UnitTestElements").Selected,
+			LinkedTypeUnitTestsDataRule);
 
-			var dataRule = new DataRule<UnitTestElements>.DesperateDataRule(
-				"ProjectModelToUnitTestElements",
-				new UnitTestDataConstants.ElementsDataConstants("UnitTestElements").Selected,
-				LinkedTypeUnitTestsDataRule);
+		dataContexts.RegisterDataRule(lifetime, dataRule);
+	}
 
-			dataContexts.RegisterDataRule(lifetime, dataRule);
-		}
-
-		private UnitTestElements LinkedTypeUnitTestsDataRule(IDataContext context)
-		{
-			var linkedTypes = LinkedTypesUtil.GetLinkedTypes(context);
-			var relevantTests = linkedTypes.Select(x => _unitTestElementStuff.GetElement(x)).WhereNotNull();
-			return new UnitTestElements(new TestAncestorCriterion(relevantTests));
-		}
+	private UnitTestElements LinkedTypeUnitTestsDataRule(IDataContext context)
+	{
+		var linkedTypes = LinkedTypesUtil.GetLinkedTypes(context);
+		var relevantTests = linkedTypes.Select(x => _unitTestElementStuff.GetElement(x)).WhereNotNull();
+		return new UnitTestElements(new TestAncestorCriterion(relevantTests));
 	}
 }
