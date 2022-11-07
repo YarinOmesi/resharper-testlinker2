@@ -11,26 +11,27 @@ using ReSharperPlugin.TestLinker2.Navigation;
 
 [assembly: Apartment(ApartmentState.STA)]
 
-namespace ReSharperPlugin.TestLinker2.Tests;
-
-[ZoneDefinition]
-public interface ITestLinker2TestEnvironmentZone : ITestsEnvZone, IRequire<PsiFeatureTestZone>
+namespace ReSharperPlugin.TestLinker2.Tests
 {
-}
-
-[ZoneMarker]
-public class ZoneMarker : IRequire<ICodeEditingZone>, IRequire<ILanguageCSharpZone>,
-	IRequire<ITestLinker2TestEnvironmentZone>
-{
-}
-
-[SetUpFixture]
-public class TestLinker2TestsAssembly : ExtensionTestEnvironmentAssembly<ITestLinker2TestEnvironmentZone>
-{
-	public TestLinker2TestsAssembly()
+	[ZoneDefinition]
+	public interface ITestLinker2TestEnvironmentZone : ITestsEnvZone, IRequire<PsiFeatureTestZone>
 	{
-		// an explicit reference to a type from the production code is necessary,
-		// because otherwise the JetBrains testing framework won't load the Rider/R# plugin.
-		Type type = typeof(LinkedTypesNavigationProvider);
+	}
+
+	[ZoneMarker]
+	public class ZoneMarker : IRequire<ICodeEditingZone>, IRequire<ILanguageCSharpZone>,
+		IRequire<ITestLinker2TestEnvironmentZone>
+	{
+	}
+
+	[SetUpFixture]
+	public class TestLinker2TestsAssembly : ExtensionTestEnvironmentAssembly<ITestLinker2TestEnvironmentZone>
+	{
+		public TestLinker2TestsAssembly()
+		{
+			// an explicit reference to a type from the production code is necessary,
+			// because otherwise the JetBrains testing framework won't load the Rider/R# plugin.
+			Type type = typeof(LinkedTypesNavigationProvider);
+		}
 	}
 }
