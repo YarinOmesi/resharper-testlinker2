@@ -4,7 +4,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.Application.DataContext;
 using JetBrains.Application.Progress;
-using JetBrains.Application.Settings;
 using JetBrains.Diagnostics;
 using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.DataContext;
@@ -13,73 +12,88 @@ using JetBrains.ReSharper.Psi.Caches;
 using JetBrains.ReSharper.Psi.ExtensionsAPI.Caches2;
 using JetBrains.ReSharper.Psi.Search;
 using JetBrains.ReSharper.Psi.Util;
+using JetBrains.TextControl;
 using JetBrains.TextControl.DataContext;
 using JetBrains.Util;
 using ReSharperPlugin.TestLinker2.Options;
 
 namespace ReSharperPlugin.TestLinker2.Utils;
 
-public class LinkedTypesUtil
+public static class LinkedTypesUtil
 {
 	public static IReadOnlyCollection<ITypeElement> GetLinkedTypes(IDataContext dataContext)
 	{
-		var solution = dataContext.GetData(ProjectModelDataConstants.SOLUTION);
-		var textControl = dataContext.GetData(TextControlDataConstants.TEXT_CONTROL);
+		ISolution solution = dataContext.GetData(ProjectModelDataConstants.SOLUTION);
+		ITextControl textControl = dataContext.GetData(TextControlDataConstants.TEXT_CONTROL);
 
 		if (solution == null || textControl == null)
 		{
 			return Array.Empty<ITypeElement>();
 		}
 
-		var typesInContextProvider = dataContext.GetComponent<ITypesFromTextControlService>().NotNull();
+		ITypesFromTextControlService typesInContextProvider =
+			dataContext.GetComponent<ITypesFromTextControlService>().NotNull();
 
-		var typesInContext = typesInContextProvider.GetTypesFromCaretOrFile(textControl, solution);
+		IEnumerable<ITypeElement> typesInContext =
+			typesInContextProvider.GetTypesFromCaretOrFile(textControl, solution);
 		return typesInContext.SelectMany(GetLinkedTypes).ToList();
 	}
 
 	public static IReadOnlyCollection<ITypeElement> GetLinkedTypes(ITypeElement source)
 	{
-		var sources = new[] {source}
+		IEnumerable<ITypeElement> sources = new[] {source}
 			.Concat(source.GetAllSuperTypes()
 				.Select(x => x.GetTypeElement())
 				.WhereNotNull()
 				.Where(x => !x.IsObjectClass()));
 
-		var linkedTypes = sources.SelectMany(GetLinkedTypesInternal).ToList();
+		List<ITypeElement> linkedTypes = sources.SelectMany(GetLinkedTypesInternal).ToList();
 
-		// TODO move to Internal method
-		var services = source.GetPsiServices();
-		linkedTypes.ForEach(x => services.Finder.FindInheritors(x, new FindResultConsumer(y =>
+		IPsiServices services = source.GetPsiServices();
+
+		// Insert All Types that Inherit From Each Linked Type
+		foreach (ITypeElement linkedType in linkedTypes)
 		{
-			if ((y as FindResultDeclaredElement)?.DeclaredElement is ITypeElement typeElement)
-				linkedTypes.Add(typeElement);
+			var findResultConsumer = new FindResultConsumer(inheritorResult =>
+			{
+				if ((inheritorResult as FindResultDeclaredElement)?.DeclaredElement is ITypeElement typeElement)
+					linkedTypes.Add(typeElement);
 
-			return FindExecution.Continue;
-		}), NullProgressIndicator.Create()));
+				return FindExecution.Continue;
+			});
+			services.Finder.FindInheritors(linkedType, findResultConsumer, NullProgressIndicator.Create());
+		}
 
 		return linkedTypes;
 	}
 
 	private static IReadOnlyCollection<ITypeElement> GetLinkedTypesInternal(ITypeElement source)
 	{
-		var settings = GetSettings(source.GetSolution());
-		var derivedNames = GetDerivedNames(source,
-			settings.NamingSuffixes.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries));
-		var attributeName = settings.TypeofAttributeName.TrimFromEnd("Attribute");
+		TestLinkerSettings settings = source.GetSolution().GetSettings();
+		string[] derivedNames = GetDerivedNames(source, settings.GetNamingSuffixesArray());
 
-		var types = GetAttributeLinkedTypes(source, attributeName);
+		string attributeName = settings.TypeofAttributeName.TrimFromEnd("Attribute");
+
+		IEnumerable<ITypeElement> types = GetAttributeLinkedTypes(source, attributeName);
 		if (types != null)
 			return types.ToList();
 
-		var psiServices = source.GetPsiServices();
+		IPsiServices psiServices = source.GetPsiServices();
 
-		var symbolCache = psiServices.Symbols.GetSymbolScope(LibrarySymbolScope.NONE, true);
-		var linkedTypes = derivedNames.SelectMany(x => symbolCache.GetElementsByShortName(x)).OfType<ITypeElement>()
-			.ToList();
+		ISymbolScope symbolCache = psiServices.Symbols.GetSymbolScope(LibrarySymbolScope.NONE, true);
+		List<ITypeElement> linkedTypes = new();
 
-		var wordIndex = psiServices.WordIndex;
-		var sourceFiles = wordIndex.GetFilesContainingAllWords(new[] {source.ShortName});
-		var typesInFiles = sourceFiles
+		// Handle Link By Name
+		IEnumerable<ITypeElement> linkedTypesByName = derivedNames
+			.SelectMany(derivedName => symbolCache.GetElementsByShortName(derivedName))
+			.OfType<ITypeElement>();
+
+		linkedTypes.AddRange(linkedTypesByName);
+
+		// Handling Link By Something With The Attribute
+		IWordIndex wordIndex = psiServices.WordIndex;
+		IEnumerable<IPsiSourceFile> sourceFiles = wordIndex.GetFilesContainingAllWords(new[] {source.ShortName});
+		IEnumerable<ClassLikeTypeElement> typesInFiles = sourceFiles
 			.SelectMany(psiServices.Symbols.GetTypesAndNamespacesInFile)
 			.OfType<ClassLikeTypeElement>()
 			.Where(x => GetAttributeLinkedTypes(x, attributeName)?.Contains(source) ?? false);
@@ -89,52 +103,57 @@ public class LinkedTypesUtil
 	}
 
 	[CanBeNull]
-	private static IEnumerable<ITypeElement> GetAttributeLinkedTypes(IAttributesSet attributesSet,
-		string attributeName)
+	private static IEnumerable<ITypeElement> GetAttributeLinkedTypes(IAttributesSet attributesSet, string attributeName)
 	{
-		var attribute = attributesSet
-			.GetAttributeInstances(true)
-			.SingleOrDefault(x => x.GetAttributeShortName()?.StartsWith(attributeName) ?? false);
+		IAttributeInstance attribute = GetFirstAttributeInstanceThatStartsWith(attributesSet, attributeName);
 		if (attribute == null)
 			return null;
 
-		var namedArguments = attribute.NamedParameters().Select(x => x.Second);
-		var positionalArguments = attribute.PositionParameters();
-		var flattenedArguments = FlattenArguments(namedArguments.Concat(positionalArguments));
+		IEnumerable<AttributeValue> namedArguments = attribute.NamedParameters().Select(x => x.Second);
+		IEnumerable<AttributeValue> positionalArguments = attribute.PositionParameters();
+		IEnumerable<AttributeValue> flattenedArguments = FlattenArguments(namedArguments.Concat(positionalArguments));
 
 		return flattenedArguments
-			.Where(x => x.IsType && !x.IsBadValue)
-			.Select(x => x.TypeValue.GetTypeElement())
+			.Where(value => value.IsType && !value.IsBadValue)
+			.Select(value => value.TypeValue.GetTypeElement())
 			.WhereNotNull();
+	}
+
+	private static IAttributeInstance GetFirstAttributeInstanceThatStartsWith(
+		IAttributesSet attributesSet,
+		string attributeName)
+	{
+		return attributesSet.GetAttributeInstances(true)
+			.SingleOrDefault(attributeInstance =>
+				attributeInstance.GetAttributeShortName()?.StartsWith(attributeName) ?? false);
 	}
 
 	private static string[] GetDerivedNames(ITypeElement source, string[] suffixes)
 	{
-		var shortName = source.ShortName;
-		return suffixes.Any(x => shortName.StartsWith(x) || shortName.EndsWith(x))
-			? new[]
-			{
+		string shortName = source.ShortName;
+		return suffixes.Any(suffix => shortName.StartsWith(suffix) || shortName.EndsWith(suffix))
+			? new[] {
 				suffixes.Aggregate(shortName, (name, suffix) => name.TrimFromStart(suffix).TrimFromEnd(suffix))
 			}
-			: suffixes.SelectMany(x => new[] {shortName + x, x + shortName}).ToArray();
+			: suffixes.SelectMany(suffix => new[] {shortName + suffix, suffix + shortName}).ToArray();
 	}
 
-	private static TestLinkerSettings GetSettings(ISolution solution)
-	{
-		var settingsStore = solution.GetComponent<ISettingsStore>();
-		var settingsOptimization = solution.GetComponent<ISettingsOptimization>();
-		var contextBoundSettingsStore =
-			settingsStore.BindToContextTransient(ContextRange.Smart(solution.ToDataContext()));
-		return contextBoundSettingsStore.GetKey<TestLinkerSettings>(settingsOptimization);
-	}
 
 	private static IEnumerable<AttributeValue> FlattenArguments(IEnumerable<AttributeValue> attributeValues)
 	{
-		foreach (var attributeValue in attributeValues)
+		foreach (AttributeValue attributeValue in attributeValues)
+		{
 			if (!attributeValue.IsArray)
+			{
 				yield return attributeValue;
+			}
 			else
-				foreach (var innerAttributeValue in FlattenArguments(attributeValue.ArrayValue.NotNull()))
+			{
+				foreach (AttributeValue innerAttributeValue in FlattenArguments(attributeValue.ArrayValue.NotNull()))
+				{
 					yield return innerAttributeValue;
+				}
+			}
+		}
 	}
 }

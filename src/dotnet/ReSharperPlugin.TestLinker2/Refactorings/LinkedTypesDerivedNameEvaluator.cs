@@ -28,12 +28,11 @@ public class LinkedTypesDerivedNameEvaluator : IDerivedRenamesEvaluator
 
 	private static IEnumerable<IDeclaredElement> GetRelatedTypesWithDerivedName(IDeclaredElement declaredElement)
 	{
-		var typeElement = declaredElement as ITypeElement;
-		if (typeElement == null)
+		if (declaredElement is not ITypeElement typeElement)
 			return Enumerable.Empty<IDeclaredElement>();
 
 		// TODO get linked types by name
-		var linkedTypes = LinkedTypesUtil.GetLinkedTypes(typeElement);
+		IReadOnlyCollection<ITypeElement> linkedTypes = LinkedTypesUtil.GetLinkedTypes(typeElement);
 		return linkedTypes.Where(x =>
 			typeElement.ShortName.Contains(x.ShortName) || x.ShortName.Contains(typeElement.ShortName));
 	}
