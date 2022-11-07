@@ -4,16 +4,15 @@ using JetBrains.ReSharper.Feature.Services.Actions;
 using JetBrains.ReSharper.Feature.Services.Navigation.ContextNavigation;
 using ReSharperPlugin.TestLinker2.Navigation;
 
-namespace ReSharperPlugin.TestLinker2.Actions
-{
-	public class GotoLinkedTypes2Action
-		: ContextNavigationActionBase<LinkedTypesNavigationProvider>
-	{
-		public const string Id = nameof(GotoLinkedTypes2Action);
+namespace ReSharperPlugin.TestLinker2.Actions;
 
-		public override IActionRequirement GetRequirement(IDataContext dataContext)
-		{
-			return CurrentPsiFileRequirementNoCaches.FromDataContext(dataContext);
-		}
+public class GotoLinkedTypes2Action
+	: ContextNavigationActionBase<LinkedTypesNavigationProvider>
+{
+	public const string Id = nameof(GotoLinkedTypes2Action);
+
+	public override IActionRequirement GetRequirement(IDataContext dataContext)
+	{
+		return CurrentPsiFileRequirementNoCaches.FromDataContext(dataContext);
 	}
 }

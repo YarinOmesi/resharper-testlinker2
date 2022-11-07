@@ -4,14 +4,13 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.UnitTestFramework;
 using JetBrains.TextControl;
 
-namespace ReSharperPlugin.TestLinker2
+namespace ReSharperPlugin.TestLinker2;
+
+[ZoneMarker]
+public class ZoneMarker
+	: IRequire<IUnitTestingZone>,
+		IRequire<ILanguageCSharpZone>,
+		IRequire<DaemonEngineZone>,
+		IRequire<ITextControlsZone>
 {
-	[ZoneMarker]
-	public class ZoneMarker
-		: IRequire<IUnitTestingZone>,
-			IRequire<ILanguageCSharpZone>,
-			IRequire<DaemonEngineZone>,
-			IRequire<ITextControlsZone>
-	{
-	}
 }

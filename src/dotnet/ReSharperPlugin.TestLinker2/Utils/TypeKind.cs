@@ -1,8 +1,7 @@
-namespace ReSharperPlugin.TestLinker2.Utils
+namespace ReSharperPlugin.TestLinker2.Utils;
+
+public enum TypeKind
 {
-	public enum TypeKind
-	{
-		Production,
-		Test
-	}
+	Production,
+	Test
 }
