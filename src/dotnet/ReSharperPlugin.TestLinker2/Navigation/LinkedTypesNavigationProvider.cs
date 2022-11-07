@@ -13,8 +13,8 @@ public class LinkedTypesNavigationProvider
 	public LinkedTypesNavigationProvider(
 		IShellLocks locks,
 		ITooltipManager tooltipManager,
-		IFeaturePartsContainer manager)
-		: base(manager)
+		IFeaturePartsContainer manager
+	) : base(manager)
 	{
 	}
 

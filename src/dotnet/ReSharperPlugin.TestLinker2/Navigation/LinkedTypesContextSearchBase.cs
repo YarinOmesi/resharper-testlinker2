@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using JetBrains.Application.DataContext;
 using JetBrains.Diagnostics;
+using JetBrains.DocumentModel;
 using JetBrains.DocumentModel.DataContext;
+using JetBrains.ProjectModel;
 using JetBrains.ProjectModel.DataContext;
 using JetBrains.ReSharper.Feature.Services.Navigation.ContextNavigation;
 using JetBrains.ReSharper.Feature.Services.Util;
@@ -13,15 +15,17 @@ using JetBrains.TextControl.DataContext;
 
 namespace ReSharperPlugin.TestLinker2.Navigation;
 
+// TODO: Needed
 public abstract class LinkedTypesContextSearchBase : DeclaredElementContextSearchBase<LinkedTypesSearchRequest>
 {
 	protected abstract LinkedTypesSearchRequest CreateSearchRequest(ITypeElement type, ITextControl textControl);
 
-	protected override LinkedTypesSearchRequest CreateSearchRequest(IDataContext dataContext,
+	protected override LinkedTypesSearchRequest CreateSearchRequest(
+		IDataContext dataContext,
 		IDeclaredElement element,
 		IDeclaredElement initialTarget)
 	{
-		var textControl = dataContext.GetData(TextControlDataConstants.TEXT_CONTROL);
+		ITextControl textControl = dataContext.GetData(TextControlDataConstants.TEXT_CONTROL);
 		if (textControl == null)
 		{
 			return null;
@@ -30,19 +34,22 @@ public abstract class LinkedTypesContextSearchBase : DeclaredElementContextSearc
 		return element is ClassLikeTypeElement type ? CreateSearchRequest(type, textControl) : null;
 	}
 
-	protected override IEnumerable<IDeclaredElement> GetElementCandidates(IDataContext context,
-		ReferencePreferenceKind kind, bool updateOnly)
+	protected override IEnumerable<IDeclaredElement> GetElementCandidates(
+		IDataContext context,
+		ReferencePreferenceKind kind,
+		bool updateOnly)
 	{
-		var solution = context.GetData(ProjectModelDataConstants.SOLUTION);
-		var caretOffset = context.GetData(DocumentModelDataConstants.EDITOR_CONTEXT).NotNull().CaretOffset;
+		ISolution solution = context.GetData(ProjectModelDataConstants.SOLUTION);
 		if (solution == null)
 			return base.GetElementCandidates(context, kind, updateOnly);
 
-		var typeOrMember = TextControlToPsi.GetContainingTypeOrTypeMember(solution, caretOffset);
-		if (!(typeOrMember is IClrDeclaredElement clr))
+		DocumentOffset caretOffset = context.GetData(DocumentModelDataConstants.EDITOR_CONTEXT).NotNull().CaretOffset;
+
+		IDeclaredElement typeOrMember = TextControlToPsi.GetContainingTypeOrTypeMember(solution, caretOffset);
+		if (typeOrMember is not IClrDeclaredElement clr)
 			return base.GetElementCandidates(context, kind, updateOnly);
 
-		var containingType = clr as ITypeElement ?? clr.GetContainingType();
+		ITypeElement containingType = clr as ITypeElement ?? clr.GetContainingType();
 		if (containingType == null)
 			return base.GetElementCandidates(context, kind, updateOnly);
 

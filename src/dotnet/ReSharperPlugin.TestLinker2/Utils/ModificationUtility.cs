@@ -28,11 +28,12 @@ public static class ModificationUtility
 {
 	public static void TryCreateTestOrProductionClass(ITypeElement sourceType, ITextControl textControl)
 	{
-		var solution = sourceType.GetSolution();
+		ISolution solution = sourceType.GetSolution();
 
-		var typesNearCaretOrFile = solution.GetComponent<ITypesFromTextControlService>()
+		IEnumerable<ITypeElement> typesNearCaretOrFile = solution.GetComponent<ITypesFromTextControlService>()
 			.GetTypesNearCaretOrFile(textControl, solution);
-		var templateTypes = typesNearCaretOrFile.Select(GetLinkedTypeWithDerivedName).WhereNotNull()
+		Tuple<ITypeElement, ITypeElement> templateTypes = typesNearCaretOrFile.Select(GetLinkedTypeWithDerivedName)
+			.WhereNotNull()
 			.FirstOrDefault();
 
 		if (templateTypes == null)
@@ -44,42 +45,66 @@ public static class ModificationUtility
 			return;
 		}
 
-		var templateSourceType = templateTypes.Item1;
-		var templateLinkedType = templateTypes.Item2;
+		ITypeElement templateSourceType = templateTypes.Item1;
+		ITypeElement templateLinkedType = templateTypes.Item2;
 
-		var linkedTypeName = DerivedNameUtility.GetDerivedName(sourceType.ShortName, templateSourceType.ShortName,
-			templateLinkedType.ShortName);
-		var linkedTypeNamespace = DerivedNameUtility.GetDerivedNamespace(sourceType, templateLinkedType);
-		var linkedTypeSourceFile = templateLinkedType.GetSingleOrDefaultSourceFile()
+		string linkedTypeName = DerivedNameUtility.GetDerivedName(
+			sourceType.ShortName,
+			templateSourceType.ShortName,
+			templateLinkedType.ShortName
+			);
+
+		string linkedTypeNamespace = DerivedNameUtility.GetDerivedNamespace(sourceType, templateLinkedType);
+
+		IPsiSourceFile linkedTypeSourceFile = templateLinkedType.GetSingleOrDefaultSourceFile()
 			.NotNull("linkedTypeSourceFile != null");
-		var linkedTypeProject = linkedTypeSourceFile.GetProject().NotNull("linkedTypeProject != null");
-		var linkedTypeKind = !solution.GetComponent<IUnitTestPsiManager>()
+
+		IProject linkedTypeProject = linkedTypeSourceFile.GetProject().NotNull("linkedTypeProject != null");
+		TypeKind linkedTypeKind = !solution.GetComponent<IUnitTestPsiManager>()
 			.IsElementOfKind(templateLinkedType, UnitTestElementKind.TestContainer)
 			? TypeKind.Production
 			: TypeKind.Test;
 
-		var rootNamespace = linkedTypeProject.GetDefaultNamespace() ?? linkedTypeProject.Name;
-		var shortenedLinkedTypeNamespace = linkedTypeNamespace
+		string rootNamespace = linkedTypeProject.GetDefaultNamespace() ?? linkedTypeProject.Name;
+		string shortenedLinkedTypeNamespace = linkedTypeNamespace
 			.TrimFromStart(rootNamespace)
 			.TrimFromStart(".");
 
-		if (!MessageBox.ShowYesNo(
-			    $"Class: {linkedTypeName}\r\nProject: {linkedTypeProject.Name}\r\nNamespace: {shortenedLinkedTypeNamespace}\r\n",
-			    $"Create {linkedTypeKind} class for {sourceType.ShortName}?"))
+		bool userWantNewClass = AskUseIfCreateNewClass(
+			sourceType.ShortName,
+			linkedTypeName,
+			linkedTypeProject.Name,
+			shortenedLinkedTypeNamespace,
+			linkedTypeKind
+		);
+		if (!userWantNewClass)
+		{
 			return;
+		}
 
+		// Creating New Test File
 		var threading = solution.GetComponent<IThreading>();
-		threading.ExecuteOrQueueEx(
-			nameof(TryCreateTestOrProductionClass),
-			() =>
-			{
-				var linkedTypeProjectFolder = GetLinkedTypeFolder(linkedTypeNamespace, linkedTypeProject);
-				var linkedTypeFile = GetLinkedTypeFile(linkedTypeName, linkedTypeNamespace, templateLinkedType);
-				var linkedTypeProjectFile = AddNewItemHelper.AddFile(linkedTypeProjectFolder,
-					linkedTypeName + ".cs", linkedTypeFile.GetText());
-				linkedTypeProjectFile.Navigate(Shell.Instance.GetComponent<IMainWindowPopupWindowContext>().Source,
-					true);
-			});
+		threading.ExecuteOrQueueEx(nameof(TryCreateTestOrProductionClass), () =>
+		{
+			IProjectFolder linkedTypeProjectFolder = GetLinkedTypeFolder(linkedTypeNamespace, linkedTypeProject);
+			ICSharpFile linkedTypeFile = GetLinkedTypeFile(linkedTypeName, linkedTypeNamespace, templateLinkedType);
+			IProjectFile linkedTypeProjectFile = AddNewItemHelper.AddFile(linkedTypeProjectFolder,
+				linkedTypeName + ".cs", linkedTypeFile.GetText());
+			linkedTypeProjectFile.Navigate(Shell.Instance.GetComponent<IMainWindowPopupWindowContext>().Source, true);
+		});
+	}
+
+	private static bool AskUseIfCreateNewClass(
+		string sourceName,
+		string newClassName,
+		string newClassProjectName,
+		string newClassNamespace,
+		TypeKind linkedTypeKind)
+	{
+		var text = $"Class: {newClassName}\r\nProject: {newClassProjectName}\r\nNamespace: {newClassNamespace}\r\n";
+		var caption = $"Create {linkedTypeKind} class for {sourceName}?";
+
+		return MessageBox.ShowYesNo(text, caption);
 	}
 
 	[CanBeNull]

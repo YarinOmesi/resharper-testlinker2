@@ -13,6 +13,13 @@ namespace ReSharperPlugin.TestLinker2.Navigation;
 // TODO: what is it good for?
 public sealed class LinkedTypesSearchDescriptor : SearchDescriptor
 {
+	public override string ActionBarID => "TreeModelBrowser.Standard";
+
+	public override TypeDependenciesOptions DiagrammingOptions => new(
+		new[] {TypeElementDependencyType.ReturnType},
+		TypeDependenciesOptions.CollapseBigFoldersFunc
+	);
+
 	private const string NoLinkedTypesFoundText = "No linked types found";
 
 	public LinkedTypesSearchDescriptor(LinkedTypesSearchRequest request, ICollection<IOccurrence> results)
@@ -20,32 +27,26 @@ public sealed class LinkedTypesSearchDescriptor : SearchDescriptor
 	{
 	}
 
-	public override string ActionBarID => "TreeModelBrowser.Standard";
-
-	public override TypeDependenciesOptions DiagrammingOptions
-		=> new TypeDependenciesOptions(new[] {TypeElementDependencyType.ReturnType},
-			TypeDependenciesOptions.CollapseBigFoldersFunc);
-
 	public override string GetResultsTitle(OccurrenceSection section)
 	{
 		if (section.TotalCount == 0)
+		{
+			myLogger.Info("GetResultsTitle: No Linked Types Found");
 			return NoLinkedTypesFoundText;
+		}
 
-		var typeOrTypes = NounUtil.ToPluralOrSingular("type", section.TotalCount);
+		string typeOrTypes = NounUtil.ToPluralOrSingular("type", section.TotalCount);
 		return section.FilteredCount == section.TotalCount
 			? $"Found {section.TotalCount} linked {typeOrTypes}"
 			: $"Displaying {section.FilteredCount} of {section.TotalCount} linked {typeOrTypes}";
 	}
 
-	protected override Func<SearchRequest, IOccurrenceBrowserDescriptor> GetDescriptorFactory()
+	protected override Func<SearchRequest, IOccurrenceBrowserDescriptor> GetDescriptorFactory() => DescriptorFactory;
+	private static IOccurrenceBrowserDescriptor DescriptorFactory(SearchRequest request)
 	{
-		Func<SearchRequest, IOccurrenceBrowserDescriptor> descriptorFactory = request =>
-		{
-			var declarationRequest = (LinkedTypesSearchRequest) request;
-			var results = request.Search();
-			var descriptor = new LinkedTypesSearchDescriptor(declarationRequest, results);
-			return descriptor;
-		};
-		return descriptorFactory;
+		var declarationRequest = (LinkedTypesSearchRequest) request;
+		ICollection<IOccurrence> results = request.Search();
+		return new LinkedTypesSearchDescriptor(declarationRequest, results);
 	}
+
 }

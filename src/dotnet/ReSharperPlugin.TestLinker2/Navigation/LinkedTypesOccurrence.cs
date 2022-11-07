@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using JetBrains.Application.UI.PopupLayout;
 using JetBrains.Diagnostics;
+using JetBrains.DocumentModel;
 using JetBrains.IDE;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Navigation.NavigationExtensions;
@@ -13,46 +14,47 @@ namespace ReSharperPlugin.TestLinker2.Navigation;
 
 public class LinkedTypesOccurrence : DeclaredElementOccurrence
 {
+	public bool HasNameDerived { get; }
+
 	public LinkedTypesOccurrence(
 		[NotNull] IDeclaredElement element,
 		OccurrenceType occurrenceKind,
-		bool hasNameDerived)
-		: base(element, occurrenceKind)
+		bool hasNameDerived
+	) : base(element, occurrenceKind)
 	{
 		HasNameDerived = hasNameDerived;
 	}
-
-	public bool HasNameDerived { get; }
 
 	public override bool Navigate(
 		ISolution solution,
 		PopupWindowContextSource windowContext,
 		bool transferFocus,
-		TabOptions tabOptions = TabOptions.Default)
+		TabOptions tabOptions = TabOptions.Default
+	)
 	{
-		var textControlManager = solution.GetComponent<ITextControlManager>();
+		ITextControlManager textControlManager = solution.GetComponent<ITextControlManager>();
 
-		var declaredElement = OccurrenceElement.NotNull().GetValidDeclaredElement();
+		IDeclaredElement declaredElement = OccurrenceElement.NotNull().GetValidDeclaredElement();
 		if (declaredElement == null)
 			return false;
 
-		foreach (var declaration in declaredElement.GetDeclarations())
+		foreach (IDeclaration declaration in declaredElement.GetDeclarations())
 		{
-			var sourceFile = declaration.GetSourceFile();
+			IPsiSourceFile sourceFile = declaration.GetSourceFile();
 			if (sourceFile == null)
 				continue;
 
-			foreach (var textControl in textControlManager.TextControls)
+			foreach (ITextControl textControl in textControlManager.TextControls)
 			{
 				if (textControl.Document != sourceFile.Document)
 					continue;
 
-				var declarationRange = declaration.GetDocumentRange();
-				var textControlOffset = textControl.Caret.DocumentOffset();
+				DocumentRange declarationRange = declaration.GetDocumentRange();
+				DocumentOffset textControlOffset = textControl.Caret.DocumentOffset();
 				if (!declarationRange.Contains(textControlOffset))
 					continue;
 
-				var popupWindowContextSource = solution.GetComponent<IMainWindowPopupWindowContext>().Source;
+				PopupWindowContextSource popupWindowContextSource = solution.GetComponent<IMainWindowPopupWindowContext>().Source;
 				return sourceFile.Navigate(
 					textControl.Selection.OneDocRangeWithCaret(),
 					transferFocus,

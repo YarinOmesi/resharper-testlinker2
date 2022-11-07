@@ -10,16 +10,19 @@ public static class DerivedNameUtility
 {
 	public static string GetDerivedNamespace(ITypeElement sourceType, ITypeElement templateLinkedType)
 	{
-		var sourceDefaultNamespace = GetDefaultNamespace(
-			sourceType!.GetSingleOrDefaultSourceFile()!.GetProject().NotNull());
+		string sourceDefaultNamespace = GetDefaultNamespace(GetProjectOfType(sourceType));
 
-		var linkedDefaultNamespace = GetDefaultNamespace(
-			templateLinkedType!.GetSingleOrDefaultSourceFile()!.GetProject().NotNull());
+		string linkedDefaultNamespace = GetDefaultNamespace(GetProjectOfType(templateLinkedType));
 
-		var sourceNamespaceTail = sourceType.GetContainingNamespace()
+		string sourceNamespaceTail = sourceType.GetContainingNamespace()
 			.QualifiedName.TrimFromStart(sourceDefaultNamespace);
 
 		return linkedDefaultNamespace + sourceNamespaceTail;
+	}
+
+	private static IProject GetProjectOfType(ITypeElement sourceType)
+	{
+		return sourceType!.GetSingleOrDefaultSourceFile()!.GetProject().NotNull();
 	}
 
 	private static string GetDefaultNamespace(IProject sourceProject)
@@ -35,11 +38,6 @@ public static class DerivedNameUtility
 			: templateLinkedName.Replace(templateSourceName, sourceName);
 	}
 
-	public static bool IsDerivedName(string baseName, string derivedName)
-	{
-		return derivedName.Contains(baseName);
-	}
-
 	public static bool IsDerivedNameAny(string name1, string name2)
 	{
 		if (name1.Length == name2.Length)
@@ -49,4 +47,6 @@ public static class DerivedNameUtility
 			? IsDerivedName(name2, name1)
 			: IsDerivedName(name1, name2);
 	}
+
+	private static bool IsDerivedName(string baseName, string derivedName) => derivedName.Contains(baseName);
 }
