@@ -5,14 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 2022.2.4
+
+- Support for the public release of Rider 2022.2.4
+
 ## 2022.2.3
+
 - Support for the public release of Rider 2022.2.3
 
 ## 2022.2.1
+
 - Support for the public release of Rider 2022.2.1
-- Changed keyboard shortcut for _Go to linked types_ from `Ctrl + Shift + I` to 'Alt + F7' ([see #8](https://github.com/vladyslav-burylov/resharper-testlinker2/issues/8))
+- Changed keyboard shortcut for _Go to linked types_ from `Ctrl + Shift + I`
+  to `Alt + F7` ([see #8](https://github.com/vladyslav-burylov/resharper-testlinker2/issues/8))
 
 ## 2022.2
+
 - Support for the public release of Rider 2022.2
 
 ## 2022.1.2
